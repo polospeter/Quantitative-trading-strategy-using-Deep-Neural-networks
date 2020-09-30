@@ -35,7 +35,7 @@ def bollinger(df,x):
     df['bb_up_'+str(x)] = df['Close'].rolling(window=x, min_periods=0).mean() + (df['Close'].rolling(window=x, min_periods=0).std() * 2)
     df['bb_down_'+str(x)] = df['Close'].rolling(window=x, min_periods=0).mean() - (df['Close'].rolling(window=x, min_periods=0).std() * 2)
 
-    df['bb_up_'+str(x)] = df['bb_up_'+str(x)] / df['Close'] -1 
+    df['bb_up_'+str(x)] = df['bb_up_'+str(x)] / df['Close'] -1
     df['bb_down_'+str(x)] = df['bb_down_'+str(x)] / df['Close'] -1
     return df
 
@@ -58,7 +58,7 @@ def atr(df,x):
     data1=df['High']-df['Low']
     data2=abs(df['Low']-df['Close'].shift(1,fill_value=df['Close'][1]))
     data3=abs(df['High']-df['Close'].shift(1,fill_value=df['Close'][1]))
-        
+
     bigdata = pd.concat([data1,data2,data3], ignore_index=False,axis=1)
     bigdatamax=bigdata.max(axis=1)
     df['ATR_'+str(x)]=bigdatamax.rolling(window=x, min_periods=0).mean()
@@ -80,30 +80,35 @@ def RSI(series,xx):
     d = u.copy()
     u[delta > 0] = delta[delta > 0] # up moves/gains
     d[delta < 0] = -delta[delta < 0] # down moves/losses
-    
+
     u[u.index[period-1]] = np.mean( u[:period] ) #first value is sum of avg gains
     u = u.drop(u.index[:(period-1)])
-    
+
     d[d.index[period-1]] = np.mean( d[:period] ) #first value is sum of avg losses
     d = d.drop(d.index[:(period-1)])
-    
+
     # Calculate the EWMA
     roll_up1 = u.rolling(period).mean()
     roll_down1 = d.rolling(period).mean()
 
     # Calculate the RSI based on EWMA
     RS1 = roll_up1 / roll_down1
-    RSI1 = 100.0 - (100.0 / (1.0 + RS1)) 
+    RSI1 = 100.0 - (100.0 / (1.0 + RS1))
     return RSI1
 
 def rsi(df,x):
     df['RSI_'+str(x)] = df[['Close']].apply(RSI,xx=x)
     return df
 
-#--------------------------------------------------------------------------------------------------------
+def aroonosc(df,x):
+    arohigh=100
+    arolow=0
+    df['Aroon Oscillator_'+str(x)] =arohigh-arolow
+    return df 
+--------------------------------------------------------------------------------------------------------
 
 # Formula for the Dice Loss function: --------------------------------------------------------------------
-    
+
 import keras.backend as K
 
 def dice_coef(y_true, y_pred, smooth, thresh):
