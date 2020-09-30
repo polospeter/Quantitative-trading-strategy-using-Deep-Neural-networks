@@ -18,7 +18,7 @@ def ma(df,x):
     return df
 
 #-------------------------------------------------------------------------------------------------------------------
-# Bias-I guess it needs to be absolute value, not sure
+# Bias
 def bias(df,x):
     df['bias_'+str(x)]=df['Close'].rolling(window=x, min_periods=0).mean()-df['Close']
     return df
@@ -47,7 +47,7 @@ def stochasticline(df,x):
     return df
 
 #------------------------------------------------------------------------------------------------------
-# Williams %R -- play around with different periods
+# Williams %R
 def williamR(df,x):
     df['William_R%_'+str(x)]=100*(df['High'].rolling(window=x, min_periods=0).max()-df['Close'])/(df['High'].rolling(window=x, min_periods=0).max()-df['Low'].rolling(window=x, min_periods=0).min())
     return df
@@ -100,11 +100,13 @@ def rsi(df,x):
     df['RSI_'+str(x)] = df[['Close']].apply(RSI,xx=x)
     return df
 
+#--------------------------------------------------------------------------------------------------------
+# Aroon Oscillator
 def aroonosc(df,x):
     arohigh=100
     arolow=0
     df['Aroon Oscillator_'+str(x)] =arohigh-arolow
-    return df 
+    return df
 --------------------------------------------------------------------------------------------------------
 
 # Formula for the Dice Loss function: --------------------------------------------------------------------
