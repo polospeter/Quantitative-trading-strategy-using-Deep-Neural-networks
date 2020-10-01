@@ -13,8 +13,6 @@ import time
 # DOW30 stocks
 tickers = ['MMM','AXP','AAPL','BA','CAT','CVX','CSCO','XOM','GS','HD','IBM','INTC','JNJ','KO','JPM','MCD','MMM','MRK','MSFT','NKE','PFE','PG','TRV','UNH','UTX','VZ','WMT','WBA','DIS'] # all these stocks have data from 2001
 
-tickers = ["PG"] 
-
 start_date =datetime.datetime(2012, 11,23)
 
 end_date =datetime.datetime(2018, 12, 31)
