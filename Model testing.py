@@ -8,8 +8,9 @@ import time
 ###################################################################################################################
 
 # Final version of group BACKTEST function: -----------------------------------------------------------------------------
+# It is the version of the Backtesting function that can take multiple stocks as inputs for a given time period, and will run the backtest for each one of them.
 
-# DOW30, but onyl 29 stocks left in it
+# DOW30 stocks
 tickers = ['MMM','AXP','AAPL','BA','CAT','CVX','CSCO','XOM','GS','HD','IBM','INTC','JNJ','KO','JPM','MCD','MMM','MRK','MSFT','NKE','PFE','PG','TRV','UNH','UTX','VZ','WMT','WBA','DIS'] # all these stocks have data from 2001
 
 tickers = ["PG"] 
@@ -24,7 +25,7 @@ time_periods=1
 
 
 #################################################################################################x
-  
+# Here we initialize the necessary train and test datasets for the Buy and Sell signals.
 d={}
 dd={}
 mylabels={}
@@ -70,7 +71,7 @@ lstm_ytrain_buy_appended={}
 lstm_ytrain_sell_appended={}
 
 
-# This case we import data of stocks from 2001 to 2018, we label it, and add features to it:
+# Here we import data of stocks for the given time period, we label it, and add features to it:
 for x in range(len(tickers)):
     
     # Import the stock: -----------------------------------------------------------------------------------------------
@@ -131,7 +132,7 @@ for k in range(time_periods): #Number of time periods:
         #===============================================================================================================
 
 # LSTM model:  --------------------------------------------------------------------------------------------------   for k in range(time_periods): 
-
+# The LSTM model requires a special input data structure.
 #######################################################################################################################################
 
 # Define the class_weights for Weighted Binary Cross-entropy function: 
@@ -148,7 +149,9 @@ weights[0,]=[(len(y_integers)-sum(y_integers))/sum(y_integers),1]
 import random
 random.seed(1234)
 
-#                 Train each Model on only one stock data: --------------------------------------------
+
+
+#            Train each Model on only one stock data: --------------------------------------------
 
 sell_saved = sell_lstm.get_weights()
 buy_saved = buy_lstm.get_weights()
@@ -432,21 +435,21 @@ plt.title("Violin plot for the rates of return of different strategies in 2018",
 
 ############################################################################################################################
 
-# Violin plots 2006:
+# Violin plots for the year 2006:
 fig=plt.figure(figsize=(20,10)) 
 ax = sns.violinplot(data=finaltablets6,linewidth=2.5)
 plt.ylabel('Rate of Return', fontsize=14)
 plt.title("Violin plot for the rates of return of different trading strategies in 2006",fontsize=14)
 plt.savefig('violin2006new.png')
 
-# Violin plots 2012:
+# Violin plots for the year 2012:
 fig=plt.figure(figsize=(20,10)) 
 ax = sns.violinplot(data=finaltablets12,linewidth=2.5)
 plt.ylabel('Rate of Return', fontsize=14)
 plt.title("Violin plot for the rates of return of different trading strategies in 2012",fontsize=14)
 plt.savefig('violin2012new.png')
 
-# Violin plots 2018:
+# Violin plots for the year 2018:
 fig=plt.figure(figsize=(20,10)) 
 ax = sns.violinplot(data=finaltablets18,linewidth=2.5)
 plt.ylabel('Rate of Return', fontsize=14)
