@@ -1,5 +1,5 @@
 
-# Python for finance tutorial
+
 import tensorflow as tf
 import pandas as pd
 import numpy as np
@@ -63,7 +63,7 @@ plotlabels(stock[0:400],mylabels[0:400])
 plt.savefig('foo.png') # save it as an image
 
 #-----------------------
-# Convert to continous labels:
+# (Optional) Convert to continous labels:
 tradingsignal2=transformtocontinuos(mylabels)
 plt.plot(tradingsignal2[0:100])
 
@@ -102,7 +102,7 @@ weights = class_weight.compute_class_weight('balanced',np.unique(y_integers),y_i
 
 #... Run the Model::--------------------------------------------------------------------------------
 
-
+# Create the Neural network for predicting the Sell signals
 from keras import backend as K
         
          # Define Sell Model:
@@ -126,7 +126,7 @@ from keras import backend as K
         sellmodel.add(LeakyReLU(alpha=0.1))
         sellmodel.add(Dropout(0.1)) 
         
-        sellmodel.add(Dense(1, activation='sigmoid')) # 1 classes
+        sellmodel.add(Dense(1, activation='sigmoid')) # 1 class
         
         opt= keras.optimizers.adam(lr=1e-4,beta_2=0.999) #
         sellmodel.compile(loss=dice_coef_losss, optimizer=opt, metrics=['accuracy'])
@@ -150,7 +150,7 @@ from keras import backend as K
 #==========================================================================================================
 buysignals={}
 
-
+# Create the Neural network for predicting the BUY signals
         # Define Buy Model:        
         buymodel = Sequential()
         buymodel.add(Dense(128, input_shape=x_train_buy["stock0-period-0"].shape[1:]))
@@ -172,7 +172,6 @@ buysignals={}
         buymodel.add(LeakyReLU(alpha=0.1))
         buymodel.add(Dropout(0.1))
         
-        # Reasoning why to use sigmoid incase of one class!!!!
         buymodel.add(Dense(1, activation='sigmoid')) # 1 classes
         
         opt= keras.optimizers.adam(lr=0.0001,beta_2=0.999) #
@@ -211,7 +210,6 @@ buy_model=load_model('freshstart_buy_bestmodel.hdf5',custom_objects={'dice_coef_
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Evaluation:
-#buysignals=modeleval(model,stock,x_test2,y_test2,0.5)
 
 # Buy:
 buysignals=modeleval(buy_model,stock,x_test2,y_test2,0.5)
@@ -262,12 +260,11 @@ y_test[["Buy","Wait"]]
 
 
 #________________________________________________________________________________________________________
-# Step 5--Combine the two models:------------------------------------------------------------------------
+# Step 5--Combine the Buy and Sell signal predictions:------------------------------------------------------------------------
 comblabel=pd.concat([sellsignals,buysignals])
 
 #-------------
 comblabel=svm_y_test_pred_sell.label+svm_y_test_pred_buy.label
-
 
 comblabel=pd.DataFrame(comblabel,columns=["label"])
 
@@ -278,8 +275,7 @@ plotlabels(stock,finalsignals)
 
 
 # Step 6--Model Backtesting -----------------------------------------------------------------------------
-backtest(finalsignals,stock,initcapital=10000)
-
+backtest(finalsignals,stock,initcapital=10000) # we set the initial capital for backtesting to be $10000
 
 #_______________________________________________________________________________________________________
 # Check predictions manually:
