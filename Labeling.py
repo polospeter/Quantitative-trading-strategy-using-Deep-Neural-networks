@@ -6,6 +6,8 @@ import numpy as np
 from statsmodels.tsa.holtwinters import SimpleExpSmoothing, Holt
 import matplotlib.lines as mlines
 
+
+%load_ext line_profiler
 # Labeling methods:
 
 #----------------------------------------METHOD 1--------------------------------------------------------------------
@@ -23,7 +25,7 @@ def labelmethod(ts,window):
     labels['label'][k]=-1
 
     for i in range(t-window-1):
-
+            
         if labels['label'][i]==-1:
             l=ts['Close'][i+1:(i+window)].idxmax(axis=0, skipna=True)
             #index of the maximum
@@ -36,11 +38,53 @@ def labelmethod(ts,window):
 
     print("Buy:",labels[labels.label == -1].shape[0],
           "Sell:",labels[labels.label == 1].shape[0],
+          "Hold:",labels[labels.label == 0].shape[0])
+
+    return labels
+
+%lprun -f labelmethod labelmethod(stock,25)
+
+%lprun -f labelmethodfast labelmethodfast(stock,25)
+
+ts=stock
+window=25
+
+
+ts.iloc[i+datetime.timedelta(days=1):(i+datetime.timedelta(days=window))].sort('MaxAdDown').drop_duplicates(['High', 'Low','Open','Close','Volume','Adj Close'], keep='last')
+
+
+def labelmethodfast(ts,window):
+    t=len(ts)
+    labels = pd.DataFrame(index=ts.index).fillna(0.0)
+    labels['label'] = 0.0
+    
+    i=ts['Close'][1:(window)].idxmin(axis=0, skipna=True)
+    labels.loc[i]['label']=-1
+    
+    datetime.timedelta(days=1)
+    
+    while i<labels.index.values[t-window-1]:
+        
+        if labels['label'][i]==-1:
+            l=ts['Close'][i+datetime.timedelta(days=1):(i+datetime.timedelta(days=window))].idxmax(axis=0, skipna=True)
+            #index of the maximum
+            labels.loc[l]['label']=1  # sell signal
+            i=l
+
+        elif labels['label'][i]==1:
+            k=ts['Close'][i+datetime.timedelta(days=1):(i+datetime.timedelta(days=window))].idxmin(axis=0, skipna=True)
+             #index of the minimum
+            labels.loc[k]['label']=-1   # buy signal
+            i=k
+
+    print("Buy:",labels[labels.label == -1].shape[0],
+          "Sell:",labels[labels.label == 1].shape[0],
           "Hold:",labels[labels.label == 0].shape[0],
           )
 
     return labels
 
+labelmethodfast(stock,25)
 #--------------------------------------------------------------------------------------------------
 
 def transformtocontinuos(labels):
