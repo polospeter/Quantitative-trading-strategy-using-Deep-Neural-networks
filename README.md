@@ -4,6 +4,7 @@ This repository includes all the files about my research during my master studie
 
 # Abstract:
 The main focus of my study is to predict the buy and sell decision points for stocks. I will do that by creating a classification model to capture trading signals that are hidden in historical data and learn from them, how to automatically categorise the future time series into investment actions.
+
 First, I need to convert the daily time series of stock data into a series of buy-sell-hold trigger labels/signals. For each time point an asset would be labelled either Buy, Sell or Hold. The method for this would be to use a specific time frame, like a 25-day moving window, where the local minimum of the closing prices in each of these periods would be labelled as Buy points and the local maximums as Sell points and every other time point between the two would be Hold labels.
 After labelling, I would calculate for each stock on a daily basis various technical indicators (e.g. RSI, MACD, Williams \%R,...). Later I will use these indicators as input features for my deep neural network model to predict the buy-sell-hold data points on the previously unseen datasets, based on the knowledge the model has learnt from historical data.
 I will also focus on improving the performance of these neural network models by experimenting with the structure of the networks and fine-tuning different hyperparameters of the models. 
