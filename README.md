@@ -3,7 +3,7 @@
 This repository includes all the files about my research during my master studies. The goal of my thesis was to create a deep neural network based trading strategy to predict optimal trading times for stocks.
 
 # Abstract:
-The main focus of my study was to predict the buy and sell decision points for stocks. I will do that by creating a classification model to capture trading signals that are hidden in historical data and learn from them, how to automatically categorise the future time series into investment actions.
+The main focus of my study was to predict the buy and sell decision points for stocks. I will do that by creating a classification model to capture trading signals that are hidden in historical data and learn from them, how to automatically categorise the future time series into optimal investment actions.
 
 First, I need to convert the daily time series of stock data into a series of buy-sell-hold trigger labels/signals. For each time point an asset would be labelled either Buy, Sell or Hold. The method for this would be to use a specific time frame, like a 25-day moving window, where the local minimum of the closing prices in each of these periods would be labelled as Buy points and the local maximums as Sell points and every other time point between the two would be Hold labels.
 
