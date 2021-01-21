@@ -11,4 +11,4 @@ After labelling, I would calculate for each stock on a daily basis various techn
 
 After I have my best models, I will compare the financial performance of my trading strategy based on the prediction from these models with the Buy and Hold strategy and other simple trading strategies. To make sure that the comparison is valid between my own trading strategy and other strategies, I will use multiple stocks over multiple periods for the performance evaluation and also consider factors like transaction costs.
 
-\bf{ In summary, the main purpose of my thesis was to create a completely automated trading system using deep learning algorithms, which is profitable and does not require any human intervention.}
+\textbf{In summary, the main purpose of my thesis was to create a completely automated trading system using deep learning algorithms, which is profitable and does not require any human intervention.}
