@@ -170,7 +170,7 @@ def modelprep(stockname,labels,startdate,enddate,trainratio,signalname="Sell"):
 
         combsignal.columns=["Buy"] # for binary model, one column is enough
 
-#---------------------------------------------------------------------------------      
+    #---------------------------------------------------------------------------------      
     if numsig==2 and signalname=="Sell":# Sell and Hold (Binary labeling)
         sell=(stock.buy_signal==1)*1
         hold=(stock.buy_signal==0)*1 #not only hold in reality
@@ -179,12 +179,12 @@ def modelprep(stockname,labels,startdate,enddate,trainratio,signalname="Sell"):
 
         combsignal.columns=["Sell"]
  
-#------------------------------------------------------------------------------------
-# In case of continuos labelling:
+    #------------------------------------------------------------------------------------
+    # In case of continuos labelling:
     if numsig>4: # since it is contiouns it takes up many values between 0 and 1
         combsignal=stock[['buy_signal']]
       
-#-------------------------------------------------------------------------------------        
+    #-------------------------------------------------------------------------------------        
         
     #===============================================================================================
     # Train--------------------------
@@ -197,18 +197,18 @@ def modelprep(stockname,labels,startdate,enddate,trainratio,signalname="Sell"):
     y_test=combsignal[test_start:test_end]
     x_test = X_test
     x_test.index=y_test.index
-#-------------------------------------------------------------------------------------
-# In case of Continuos labels:
+    #-------------------------------------------------------------------------------------
+    # In case of Continuos labels:
     #targets_train=combsignal[train_start:train_end]
-#-------------------------------------------------------------------------------------
+    #-------------------------------------------------------------------------------------
     
     return x_train,y_train,x_test,y_test
 
+
+
 ######################################################################################################################
-#####################################################################################################################
-
-
 #----------------------- EVALUATION ---------------------------------------------------------------------------------
+######################################################################################################################
 
 def modeleval(model,stockname,x_test,y_test,threshold=0.5):
 
