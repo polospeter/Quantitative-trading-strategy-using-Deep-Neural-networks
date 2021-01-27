@@ -32,23 +32,23 @@ def modelprep(stockname,labels,startdate,enddate,trainratio,signalname="Sell"):
     
     Parameters
     ----------
-    mu : pandas.Series with float values
-        asset point forecast
-    mu_b : pandas.Series with float values
-        Benchmark point forecast
-    scen : pandas.DataFrame with float values
-        Asset scenarios
-    scen_b : pandas.Series with float values
-        Benchmark scenarios
-    max_weight : float
-        Maximum allowed weight    
-    cvar_alpha : float
-        Alpha value used to evaluate Value-at-Risk one    
+    stockname : string
+        name of stock
+    labels : pandas.Series with float values
+        buy and sell labels provided for the stock
+    startdate : datetime format
+        starting date of stock data
+    enddate : datetime format
+        finaldate of stock data
+    trainration : float
+        ratio of train-test split    
+    signalname : string
+        buy or sell  
     
     Returns
     -------
-    float
-        Asset weights in an optimal portfolio
+    pandas dataframe
+        final input features for the model
         
     """
     
@@ -105,7 +105,7 @@ def modelprep(stockname,labels,startdate,enddate,trainratio,signalname="Sell"):
            
     ######################################################################################################################
 
-#--- Scaling of the dataset and features--------------------------------------------------------------------------------------------
+    #--- Scaling of the dataset and features--------------------------------------------------------------------------------------------
 
     from sklearn.preprocessing import MinMaxScaler
     scaler = MinMaxScaler(feature_range=(0, 1), copy=False)  # these is other type scaler as well
@@ -136,14 +136,14 @@ def modelprep(stockname,labels,startdate,enddate,trainratio,signalname="Sell"):
     
     y_test = stock[['buy_signal']][(stock.index>=test_start) & (stock.index<=test_end)]
     
-#=======================================================================================================================    
-#--------------------------------LABELING ----------------------------------------------------------------------
+    #=======================================================================================================================    
+    #--------------------------------LABELING ----------------------------------------------------------------------
     # Convert Labels into independent columns
 
-# Count number of unique signals first:
+    # Count number of unique signals first:
     numsig=len(set(stock.buy_signal))
 
-#----------------------------------------------------------------------------------    
+    #----------------------------------------------------------------------------------    
     if numsig==4:
         wait=(stock.buy_signal==0)*1
         buy=(stock.buy_signal==-1)*1
@@ -152,7 +152,7 @@ def modelprep(stockname,labels,startdate,enddate,trainratio,signalname="Sell"):
     
         combsignal=pd.concat([buy,sell,wait,hold],ignore_index=False,axis=1)  #convert to Panda dataframe
         combsignal.columns=["Buy", "Sell","Wait","Hold"]
-#---------------------------------------------------------------------------------- 
+    #---------------------------------------------------------------------------------- 
     if numsig==3:
         wait=(stock.buy_signal==0)*1
         buy=(stock.buy_signal==-1)*1
@@ -161,7 +161,7 @@ def modelprep(stockname,labels,startdate,enddate,trainratio,signalname="Sell"):
     
         combsignal=pd.concat([buy,sell,wait],ignore_index=False,axis=1)  #convert to Panda dataframe
         combsignal.columns=["Buy", "Sell","Hold"]       
-#----------------------------------------------------------------------------------   
+    #----------------------------------------------------------------------------------   
     if numsig==2 and signalname=="Buy": # Buy and Wait
         others=(stock.buy_signal==0)*1
         buy=(stock.buy_signal==1)*1
