@@ -27,6 +27,31 @@ from keras import initializers
 
 def modelprep(stockname,labels,startdate,enddate,trainratio,signalname="Sell"):
     
+        """ This function calculates the most important technical analysis indicators based on a stock time series data for a given period. Furthermore it normalizes these
+        features, and splits the data into as well
+    
+    Parameters
+    ----------
+    mu : pandas.Series with float values
+        asset point forecast
+    mu_b : pandas.Series with float values
+        Benchmark point forecast
+    scen : pandas.DataFrame with float values
+        Asset scenarios
+    scen_b : pandas.Series with float values
+        Benchmark scenarios
+    max_weight : float
+        Maximum allowed weight    
+    cvar_alpha : float
+        Alpha value used to evaluate Value-at-Risk one    
+    
+    Returns
+    -------
+    float
+        Asset weights in an optimal portfolio
+        
+    """
+    
     stock= stockname
     
     vol=stock['Volume'] # change placement of Volume column
