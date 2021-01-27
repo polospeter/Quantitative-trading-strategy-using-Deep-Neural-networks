@@ -24,8 +24,8 @@ from keras import initializers
 
 def modelprep(stockname,labels,startdate,enddate,trainratio,signalname="Sell"):
     
-        """ This function calculates the most important technical analysis indicators based on a stock time series data for a given period. Furthermore it normalizes these
-        features, and splits the data training-validation-testing sets as well, so they could be easily fed into the model.
+    """ This function calculates the most important technical analysis indicators based on a stock time series data for a given period. Furthermore it normalizes these
+    features, and splits the data training-validation-testing sets as well, so they could be easily fed into the model.
     
     Parameters
     ----------
@@ -180,13 +180,11 @@ def modelprep(stockname,labels,startdate,enddate,trainratio,signalname="Sell"):
     # In case of continuos labelling:
     if numsig>4: # since it is contiouns it takes up many values between 0 and 1
         combsignal=stock[['buy_signal']]
-      
-    #-------------------------------------------------------------------------------------        
         
     #===============================================================================================
+    
     # Train--------------------------
     y_train=combsignal[train_start:train_end]
-    #x_train= pd.DataFrame(X_train,index=y_train.index)
     x_train= X_train
     x_train.index=y_train.index
     
@@ -194,17 +192,12 @@ def modelprep(stockname,labels,startdate,enddate,trainratio,signalname="Sell"):
     y_test=combsignal[test_start:test_end]
     x_test = X_test
     x_test.index=y_test.index
-    #-------------------------------------------------------------------------------------
-    # In case of Continuos labels:
-    #targets_train=combsignal[train_start:train_end]
-    #-------------------------------------------------------------------------------------
-    
+  
     return x_train,y_train,x_test,y_test
 
 
-
 ######################################################################################################################
-#----------------------- EVALUATION ---------------------------------------------------------------------------------
+#--------- EVALUATION ---------------------------------------------------------------------------------
 ######################################################################################################################
 
 def modeleval(model,stockname,x_test,y_test,threshold=0.5):
@@ -216,7 +209,7 @@ def modeleval(model,stockname,x_test,y_test,threshold=0.5):
     
     placemax=np.argmax(predictions,axis=1)
        
-#==========================================================================================================================    
+    #==========================================================================================================================    
     # When the predictions are only one column incase of Binary classifier:
     if b==1: # How do we know whether it is buy or sell model?? 
         
@@ -229,7 +222,7 @@ def modeleval(model,stockname,x_test,y_test,threshold=0.5):
         predlabelss=pd.DataFrame(predlabels)      
         predlabelss.columns=['label']    
         
-#         #Use the written labels instead of the numbers:
+    #         #Use the written labels instead of the numbers:
         predlabelss[predlabelss.label==1]=y_test.columns[0]
         predlabelss[predlabelss.label==0]="Others"
         
@@ -240,7 +233,7 @@ def modeleval(model,stockname,x_test,y_test,threshold=0.5):
     if y_test.columns[0]=='Buy':
         labels = ["Buy","Others"]
    
-#==========================================================================================================           
+    #==========================================================================================================           
     #y_testmax=pd.DataFrame(y_test.idxmax(axis=1, skipna=True)) # ??? what is this used for???
 
     ytestma=y_test
@@ -253,20 +246,20 @@ def modeleval(model,stockname,x_test,y_test,threshold=0.5):
     print(classification_report(ytestma,predlabelss.label,labels=labels))
     
     
-   #Confusion matrix ---------------------------------------------------------------------
+    #Confusion matrix ---------------------------------------------------------------------
     mat = confusion_matrix(ytestma, predlabelss.label)
     sns.heatmap(mat, square=True, annot=True, fmt='d', cbar=False,xticklabels=labels,yticklabels=labels) 
     plt.xlabel('true label')
     plt.ylabel('predicted label')
 
-#================================================================================================================
+    #================================================================================================================
      # Visualize the predicted labels --------------------------------------------------------------------
     stock=stockname
     test_start=y_test.index[0]
     test_end=y_test.index[-1]
     stocktest=stock[(stock.index>=test_start) & (stock.index<=test_end)]
 
-#================================================================================================================
+    #================================================================================================================
     if b==1: # Incase of Sell and Hold-- Binary (one column only)
       
         predlabels=np.zeros(a)
@@ -296,12 +289,10 @@ def modeleval(model,stockname,x_test,y_test,threshold=0.5):
     return d 
 
 #########################################################################################################################
+#-------- SHORT MODEL EVALUATION
 #########################################################################################################################
 
-
 # It is a cleaned up version of the ModelEval function, focusing of Binary predicting models:
-
-# Model Eval short:
 
 def modelevalshort(model,stockname,x_test,y_test,threshold=0.5):
         
