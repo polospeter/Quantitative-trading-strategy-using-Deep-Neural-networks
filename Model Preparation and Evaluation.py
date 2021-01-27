@@ -95,14 +95,11 @@ def modelprep(stockname,labels,startdate,enddate,trainratio,signalname="Sell"):
         atr(stock,intervals[i])
         cci(stock,intervals[i])
         rsi(stock,intervals[i])
-    
-    #stock[['buy_signal']]=stock[['buy_signal']].shift(-1) no need for daily shift
-    
+        
     stock.dropna(inplace=True) #!!!!!!!!!!!!!!
            
-    ######################################################################################################################
-
-    #--- Scaling of the dataset and features--------------------------------------------------------------------------------------------
+    #============================================================================================
+    #--- Scaling of the dataset and features-----------------------------------------------------
 
     from sklearn.preprocessing import MinMaxScaler
     scaler = MinMaxScaler(feature_range=(0, 1), copy=False)  # these is other type scaler as well
@@ -111,11 +108,10 @@ def modelprep(stockname,labels,startdate,enddate,trainratio,signalname="Sell"):
 
     numsig=len(set(stock.buy_signal))
     
-    if numsig>4:
+    if numsig>4: # we know that the first 5 are the price values of the stock
         scaler = MinMaxScaler(feature_range=(-1, 1), copy=False)
 
-    # INPUT variables:
-    # we know that the first 5 are the price values of the stock
+    # INPUT variables: 
     
     # Train set =======================================================================================================
     
@@ -211,7 +207,7 @@ def modeleval(model,stockname,x_test,y_test,threshold=0.5):
        
     #==========================================================================================================================    
     # When the predictions are only one column incase of Binary classifier:
-    if b==1: # How do we know whether it is buy or sell model?? 
+    if b==1:
         
         predlabels=np.zeros(a)
             
@@ -225,8 +221,7 @@ def modeleval(model,stockname,x_test,y_test,threshold=0.5):
     #         #Use the written labels instead of the numbers:
         predlabelss[predlabelss.label==1]=y_test.columns[0]
         predlabelss[predlabelss.label==0]="Others"
-        
-        
+             
     if y_test.columns[0]=='Sell':
         labels = ["Sell","Others"]
             
@@ -244,8 +239,7 @@ def modeleval(model,stockname,x_test,y_test,threshold=0.5):
     
     # Classification report:---------------------------------------------------------------
     print(classification_report(ytestma,predlabelss.label,labels=labels))
-    
-    
+       
     #Confusion matrix ---------------------------------------------------------------------
     mat = confusion_matrix(ytestma, predlabelss.label)
     sns.heatmap(mat, square=True, annot=True, fmt='d', cbar=False,xticklabels=labels,yticklabels=labels) 
@@ -296,7 +290,7 @@ def modeleval(model,stockname,x_test,y_test,threshold=0.5):
 
 def modelevalshort(model,stockname,x_test,y_test,threshold=0.5):
         
-    # Transform Predicted signals to dataframe------------------------------------------------------------------------
+    # Transform Predicted signals to dataframe: --------------------------------------------------------------
     predictions = model.predict(x_test)
     
     predictions[predictions<threshold]=0 
@@ -306,7 +300,7 @@ def modelevalshort(model,stockname,x_test,y_test,threshold=0.5):
     predictions2=pd.DataFrame(predictions,columns=['label'],index=y_test.index) 
     #predlabelss.columns=['label']    
         
-    #Use the written labels instead of the numbers:
+    # Use the written labels instead of the numbers:----------------------------------------------------------
     predlabelss[predlabelss.label==1]=y_test.columns[0]
     predlabelss[predlabelss.label==0]="Others"
               
@@ -333,8 +327,8 @@ def modelevalshort(model,stockname,x_test,y_test,threshold=0.5):
     plt.xlabel('true label')
     plt.ylabel('predicted label')
 
-    #=============================================================================
-     # Visualize the predicted labels -------------------------------------------------------------------
+    #======================================================================================
+    # Visualize the predicted labels ------------------------------------------------------
     stock=stockname
     test_start=y_test.index[0]
     test_end=y_test.index[-1]
