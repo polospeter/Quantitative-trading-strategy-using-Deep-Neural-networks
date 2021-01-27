@@ -28,7 +28,7 @@ from keras import initializers
 def modelprep(stockname,labels,startdate,enddate,trainratio,signalname="Sell"):
     
         """ This function calculates the most important technical analysis indicators based on a stock time series data for a given period. Furthermore it normalizes these
-        features, and splits the data into as well
+        features, and splits the data training-validation-testing sets as well, so they could be easily fed into the model.
     
     Parameters
     ----------
