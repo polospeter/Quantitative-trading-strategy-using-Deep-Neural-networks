@@ -68,11 +68,11 @@ def modelprep(stockname,labels,startdate,enddate,trainratio,signalname="Sell"):
     # Ratio of train/validation/test
     val1=trainratio
     
-    # Training period -----------------------------------------------------------------------------------------------
+    # Training period --------------------------------------------------------------------------------------
     train_start = stock.index.min()
     train_end = stock.index[round(hossz*val1)]
     
-    # Testing period ------------------------------------------------------------------------------------------------
+    # Testing period ---------------------------------------------------------------------------------------
     test_start = train_end+step   
     test_end = stock.index.max()
     
@@ -471,7 +471,7 @@ def modelprepshort(stockname,labels):
     # Optional:
     #stock=stock.drop('Volume', axis=1)
     
-#--- Scaling of the dataset and features--------------------------------------------------------------------------------------------
+    #--- Scaling of the dataset and features--------------------------------------------------------------------------------------------
 
     from sklearn.preprocessing import MinMaxScaler
     scaler = MinMaxScaler(feature_range=(0, 1), copy=False)  # these is other type scaler as well
@@ -490,9 +490,9 @@ def modelprepshort(stockname,labels):
 
     return X_train, y_train    
 
+#########################################################################################################################   
+#------ PREPAREA INPUTS FOR LSTM MODELS ---------------------------------------------------------------------------------
 #########################################################################################################################
-    
-# Creating LSTM models:-------------------------------------------------------------------------------------
 
 def prepdata(x_test2,y_test2,sequence_length):
     X_test_lstm = []
