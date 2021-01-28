@@ -91,9 +91,7 @@ x_train2,y_train2,x_test2,y_test2=modelprep(stock,buy_labels,start_date,end_date
 # Continous labels: -----------------
 x_train3,y_train3,x_test3,y_test3=modelprep(stock,tradingsignal2,start_date,end_date,0.8)
 
-#######################################################################################################
-# STEP 4--Class weight for imbalanced classes -------------------------------------------------------
-#######################################################################################################
+# Set Class weight for imbalanced classes -------------------------------------------------------
 
 # Define the class_weights: 
 from sklearn.utils import class_weight
@@ -101,7 +99,9 @@ from sklearn.utils import class_weight
 y_integers = np.argmax(np.array(y_train), axis=1)
 weights = class_weight.compute_class_weight('balanced',np.unique(y_integers),y_integers)
 
-#... Run the Model::--------------------------------------------------------------------------------
+#######################################################################################################
+# STEP 4--Run the Model-------------------------------------------------------------------------------
+#######################################################################################################
 
 # Create the Neural network for predicting the Sell signals
 from keras import backend as K
