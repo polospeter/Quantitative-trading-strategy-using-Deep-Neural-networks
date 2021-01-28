@@ -7,8 +7,10 @@ from statsmodels.tsa.holtwinters import SimpleExpSmoothing, Holt
 import matplotlib.lines as mlines
 
 
-%load_ext line_profiler
-# Labeling methods:
+# For our automatic trading strategy is essential that we provide labeled historical dataset for our model to be able to
+# learn on and use that knowledge to predict optimal future trading times. Therefore we are going to label our stock data
+# into 3 possible classes/labels: BUY-SELL-HOLD. Various methods will be proposed here how we could categorize our past
+# time series into this 3 investment actions.
 
 #####################################################################################################################
 #--METHOD 1--Discrete labeling---------------------------------------------------------------------------------------
@@ -152,7 +154,7 @@ def OptimalLabelling(x,charge):
     return labels
 
 #--------------------------------------------------------------------------------------------------------
-#Individual Buy and Sell signals (every other signal is zero)
+# Individual Buy and Sell signals (every other signal is zero)
 
 def onlybuy(signals):
     buy=signals[signals==-1]*-1
@@ -207,14 +209,11 @@ def buyandwait(x_test,y_test):
 
     return tra,df
 
-#####################################################################################################################################
-
-#----------------------------------------METHOD 3--------------------------------------------------------------------
-
-# Continuos Labeling Methods:
+#####################################################################################################################
+#--METHOD 3--Continuos Labeling-------------------------------------------------------------------------------------
+#####################################################################################################################
 
 # Trend labeling: (from the study A hybrid stock trading framework integrating technical analysis... )
-
 def trendlabel(stock):
     stock['ma']=stock['Close'].rolling(window=15).mean()
     #stock['ma'] = stock['close'].ewm(span=15,min_periods=0,adjust=True,ignore_na=False).mean() # exponential weighted functions
