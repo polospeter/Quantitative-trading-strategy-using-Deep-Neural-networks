@@ -10,9 +10,9 @@ import matplotlib.lines as mlines
 %load_ext line_profiler
 # Labeling methods:
 
-#----------------------------------------METHOD 1--------------------------------------------------------------------
-
-#   Discrete Labeling Methods:
+#####################################################################################################################
+#--METHOD 1--Discrete labeling---------------------------------------------------------------------------------------
+#####################################################################################################################
 
 def labelmethod(ts,window):
     t=len(ts)
@@ -42,17 +42,7 @@ def labelmethod(ts,window):
 
     return labels
 
-%lprun -f labelmethod labelmethod(stock,25)
-
-%lprun -f labelmethodfast labelmethodfast(stock,25)
-
-ts=stock
-window=25
-
-
-ts.iloc[i+datetime.timedelta(days=1):(i+datetime.timedelta(days=window))].sort('MaxAdDown').drop_duplicates(['High', 'Low','Open','Close','Volume','Adj Close'], keep='last')
-
-
+# A faster implementation of the method:
 def labelmethodfast(ts,window):
     t=len(ts)
     labels = pd.DataFrame(index=ts.index).fillna(0.0)
@@ -85,6 +75,7 @@ def labelmethodfast(ts,window):
     return labels
 
 labelmethodfast(stock,25)
+
 #--------------------------------------------------------------------------------------------------
 
 def transformtocontinuos(labels):
@@ -109,11 +100,9 @@ def transformtocontinuos(labels):
         newlabel=pd.DataFrame(newlabels,index=labels.index,columns=["label"])
     return newlabel
 
-###################################################################################################################################
-
-#----------------------------------------METHOD 2--------------------------------------------------------------------
-
-#- PRInvestor Label method:
+#####################################################################################################################
+#--METHOD 2--PRInvestor Labeling-------------------------------------------------------------------------------------
+#####################################################################################################################
 
 # Function Buy finds the first optimal buy index
 def Buy(x,buy_id,charge):
