@@ -76,8 +76,6 @@ def labelmethodfast(ts,window):
 
     return labels
 
-labelmethodfast(stock,25)
-
 #####################################################################################################################
 #--METHOD 2--PRInvestor Labeling-------------------------------------------------------------------------------------
 #####################################################################################################################
@@ -91,7 +89,7 @@ def Buy(x,buy_id,charge):
         sell_id=sell_id+1;
     return buy_id,sell_id
 
-# =============================================================================
+#------------------------------------------------------------------------------------
 
 # Function Sell finds the first optimal sell index
 def Sell(x,sell_id,charge):
@@ -492,49 +490,8 @@ def samelabels(predlabelss):
     return newlabelpd
 
 #######################################################################################################################
-
-def plrtosignal(stock,threshold,my=0):
-    stockpd=stock
-    stock=stock['Close']
-    stock=np.array(stock)
-
-    trading=np.zeros(shape=(len(stock),1))
-    trading[0]=0.5
-
-    plrline,maxindex=plrlabeling(stock,threshold)
-
-    trend=np.diff( maxindex,axis=0) # length of window and trend
-    mask1=trend[:,1]>=0
-    mask2=trend[:,1]<0
-    combmask=np.array(mask1*1+mask2*(-1))
-    ind=np.cumsum(trend[:,0])-1
-    ind=np.insert(ind, 0, 0)
-    result=np.column_stack((trend, combmask))
-
-    for i in range(0,len(ind)-1):
-        trading[int(ind[i+1])]=0.5
-
-        for j in range(1,int(result[i,0])):
-
-            if result[i,2]==1 and (j/result[i,0])<=0.5:
-                trading[int(ind[i]+j)]=trading[int(ind[i]+j)-1]-1/(int(result[i,0]/2)*2)
-
-            if result[i,2]==1 and (j/result[i,0])>0.5:
-                trading[int(ind[i]+j)]=trading[int(ind[i]+j)-1]+1/result[i,0]
-
-            if result[i,2]==-1 and (j/result[i,0])<=0.5:
-                trading[int(ind[i]+j)]=trading[int(ind[i]+j)-1]+1/(int(result[i,0]/2)*2)
-
-            if result[i,2]==-1 and (j/result[i,0])>0.5:
-                trading[int(ind[i]+j)]=trading[int(ind[i]+j)-1]-1/result[i,0]
-
-    tradingpd=pd.DataFrame(trading,index=stockpd.index)
-
-    return tradingpd
-
-########################################################################################################################
-
 # Clear up consecutive same labels (version 2)
+########################################################################################################################
 
 def samelabelsv2(predlabelss,stock):
 
