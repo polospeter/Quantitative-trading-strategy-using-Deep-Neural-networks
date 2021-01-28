@@ -44,7 +44,7 @@ def labelmethod(ts,window):
 
     return labels
 
-# A faster implementation of the method:
+# A faster implementation of the same method:
 def labelmethodfast(ts,window):
     t=len(ts)
     labels = pd.DataFrame(index=ts.index).fillna(0.0)
