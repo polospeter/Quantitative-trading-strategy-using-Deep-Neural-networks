@@ -235,7 +235,8 @@ def trendlabel(stock):
 
     return stock['Trend value'].fillna(0)
 
-#___________________________________________________________________________________________________________
+#-------------------------------------------------------------------------------------------------------------------
+
 def converttosignal(label):
     up=label>0.5
     down=label<=0.5
@@ -247,12 +248,9 @@ def converttosignal(label):
     df['Signal']=label.diff()*(-1)
     return df  # we get a value in the in range of 0 to 1
 
-#=====================================================================================================
-#########################################################################################################################
-
-#---------------------------------------------METHOD 4---------------------------------------------------------------------
-
-# Piecewise Linear representain Method for Labelling
+#####################################################################################################################
+#--METHOD 4--Piecewise Linear representain Method for Labelling -----------------------------------------------------
+#####################################################################################################################
 
 def plrlabeling(stock,threshold):
 
@@ -307,9 +305,8 @@ def plrlabeling(stock,threshold):
 
     return line,coord
 
-#plrline,maxindex=plrlabeling(stock,3)
-
 #-----------------------------------------------------------------------------------------------------------
+
 def plrtosignal(stock,threshold):
     stockpd=stock
     #stock=stock['Close']
@@ -368,15 +365,9 @@ def plrtosignal(stock,threshold):
 
     return tradingpd
 
-
-#tradingsignal2=plrtosignal(stock,3)
-#plt.figure(figsize=(15,8))
-#plt.plot(tradingsignal2[0:200])
-
 #--------------------------------------------------------------------------------------------------------
 
 # Final buy and sell signal predictions:
-
 def exponensmooth(model,x_test,alpha,bound):
 
     predictions = model.predict(x_test)
@@ -388,21 +379,12 @@ def exponensmooth(model,x_test,alpha,bound):
 
     for i in range(len(series)-1):
         ft[i+1]=alpha*series[i+1]+(1-alpha)*ft[i]
-
-#    upper=ft*(1+bound)+0.25
-#    lower=ft*(1+bound)-0.6
-
-    #upper=ft+bound
-    #lower=ft-bound
-
+       
     # New approach:
     ran=max(predictions)-min(predictions)
 
     upper=ft+bound*ran
     lower=ft-bound*ran
-    +-
-    #upper=bar+max(predictions)-max(predictions)*bound
-    #lower=bar+min(predictions)+abs(min(predictions))*bound
 
     tradingsignals=np.zeros(len(series))
     count=0
@@ -417,14 +399,14 @@ def exponensmooth(model,x_test,alpha,bound):
             count=count+1
             tradingsignals[i]=-1
 
-     # Plot:
+    # Plot:
     fig=plt.figure(figsize=(14,7))
     ax1 = fig.add_subplot(111, ylabel='Predicted trading signal')
     plt.plot(series,color='black',label="NN output")
     plt.plot(upper,linestyle='dashed',color='red',label="Upper bound")
     plt.plot(lower,linestyle='dotted',color='red',label="Lower bound")
 
-     # Plot the "Sell" trades against the equity curve
+    # Plot the "Sell" trades against the equity curve
     ax1.plot(np.where(tradingsignals== 1.0)[0],
              series[tradingsignals== 1.0],
              's', markersize=7, color='dodgerblue')
@@ -439,13 +421,13 @@ def exponensmooth(model,x_test,alpha,bound):
     tradingsignal=pd.DataFrame(tradingsignals,columns=['label'],index=x_test.index)
 
     clearedsignals=samelabels(tradingsignal) # Clear the labels
-
-    #series=pd.DataFrame(series,columns=['label'],index=x_test.index)
-
+    
     return clearedsignals
 
 
-#-- VISUALIZE LABELS ----------------------------------------------------------------------------------
+#####################################################################################################################
+#--VISUALIZE THE LABELS ---------------------------------------------------------------------------------------------
+#####################################################################################################################
 
 def plotlabels(stock,labels):
 
