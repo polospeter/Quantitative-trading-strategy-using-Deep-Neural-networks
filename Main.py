@@ -28,11 +28,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from keras.layers import CuDNNLSTM
 
-##########################################################################################################################
 
-#-------------------------------------------- Importing dataset ----------------------------------------------------------------------------------
-#datetime(2013, 1, 1)
-#datetime(2019, 1, 1)
+#######################################################################################################
+# STEP 1--Import stocks -------------------------------------------------------------------------------
+#######################################################################################################
 
 start_date = '2010-01-01'
 end_date = '2018-12-31'
@@ -48,11 +47,6 @@ tickers = ['MMM','AXP','AAPL','BA','CAT','CVX','CSCO','XOM','GS','HD','IBM','INT
 tickers=['SPY','QQQ','XLU','XLE','XLP','XLY','EWZ','EWH','XLF']
 #===========================================================================================
 dailyreturn(stock)
-
-#######################################################################################################
-# STEP 1--Import stocks -------------------------------------------------------------------------------
-#######################################################################################################
-
 stock=pdr.get_data_yahoo(symbols=tickers[0], start=start_date, end=end_date)
 
 asset=pdr.get_data_yahoo(symbols=tickers[0], start=start_date, end=end_date)
@@ -82,7 +76,7 @@ buy_labels=onlybuy(mylabels)
 plt.plot(tradingsignal2)
 
 #######################################################################################################
-# Step 3--Model preparation ---------------------------------------------------------------------------
+# STEP 3--Model preparation ---------------------------------------------------------------------------
 #######################################################################################################
 
 # Overall:
@@ -97,8 +91,9 @@ x_train2,y_train2,x_test2,y_test2=modelprep(stock,buy_labels,start_date,end_date
 # Continous labels: -----------------
 x_train3,y_train3,x_test3,y_test3=modelprep(stock,tradingsignal2,start_date,end_date,0.8)
 
-#____________________________________________________________________________________________________
-# Step 4--Class weight for imbalanced classes -------------------------------------------------------
+#######################################################################################################
+# STEP 4--Class weight for imbalanced classes -------------------------------------------------------
+#######################################################################################################
 
 # Define the class_weights: 
 from sklearn.utils import class_weight
@@ -214,8 +209,9 @@ sell_model=load_model('freshstart_sell_bestmodel.hdf5',custom_objects={'dice_coe
 # Load buy model
 buy_model=load_model('freshstart_buy_bestmodel.hdf5',custom_objects={'dice_coef_losss':dice_coef_losss})
 
-#-----------------------------------------------------------------------------------------------------------------------
-# Evaluation:
+#######################################################################################################
+# STEP 5 Model Evaluation:
+#######################################################################################################
 
 # Buy:
 buysignals=modeleval(buy_model,stock,x_test2,y_test2,0.5)
@@ -246,7 +242,7 @@ threshold=0.5
 
 
 
-# Step 5--Model evalution ----------------------------------------------------------------------------
+#----------------------------------------------------------------------------
 finalsignals=modeleval(model,stock,x_test1,y_test1,0.5)
 
 # Sell model:
@@ -279,15 +275,17 @@ finalsignals=samelabels(comblabel) # Remove same labels
 # Plot final signals:
 plotlabels(stock,finalsignals)
 
+#######################################################################################################
+# STEP 6--Model Backtesting ---------------------------------------------------------------------------
+#######################################################################################################
 
-# Step 6--Model Backtesting -----------------------------------------------------------------------------
 backtest(finalsignals,stock,initcapital=10000) # we set the initial capital for backtesting to be $10000
 
 #_______________________________________________________________________________________________________
 # Check predictions manually:
 predictt=model.predict(x_test)
 predictt=pd.DataFrame(predictt,index=x_test.index)
-#####################################################################################################################
+
 # Define the weights: ------------------------------------------------------------------------------------------------------
                
 # Adding class_weights:
@@ -302,7 +300,6 @@ weights = class_weight.compute_class_weight('balanced',np.unique(y_integers),y_i
 weights = class_weight.compute_class_weight('balanced',np.unique(y_train),y_train)
 
 weights=[10,10,0.5,0.5]
-#######################################################################################################
 
 # Dow30 stocks:
 
@@ -316,8 +313,7 @@ lookback=7 # for LSTM
 
 time_periods=3
 
-#################################################################################################x
-  
+
 d={}
 dd={}
 mylabels={}
