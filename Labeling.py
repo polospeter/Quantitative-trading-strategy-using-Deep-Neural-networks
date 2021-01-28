@@ -78,30 +78,6 @@ def labelmethodfast(ts,window):
 
 labelmethodfast(stock,25)
 
-#--------------------------------------------------------------------------------------------------
-
-def transformtocontinuos(labels):
-
-    labelss=np.array(labels.label)
-    newlabels=labelss
-
-    for i in range(2,len(labels)-2):
-
-        if labelss[i]==1:
-            newlabels[i-1]=0.7
-            newlabels[i+1]=0.7
-            newlabels[i+2]=0.3
-            newlabels[i-2]=0.3
-
-        if labelss[i]==-1:
-            newlabels[i-1]=-0.7
-            newlabels[i+1]=-0.7
-            newlabels[i+2]=-0.3
-            newlabels[i-2]=-0.3
-
-        newlabel=pd.DataFrame(newlabels,index=labels.index,columns=["label"])
-    return newlabel
-
 #####################################################################################################################
 #--METHOD 2--PRInvestor Labeling-------------------------------------------------------------------------------------
 #####################################################################################################################
