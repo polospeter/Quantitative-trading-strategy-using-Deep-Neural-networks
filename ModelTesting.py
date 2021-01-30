@@ -71,6 +71,9 @@ lstm_test_sell_appended = {}
 lstm_ytrain_buy_appended={}
 lstm_ytrain_sell_appended={}
 
+#######################################################################################################################
+# MODEL PREPARATION
+#######################################################################################################################
 
 # Here we import data of stocks for the given time period, we label it, and add features to it:
 for x in range(len(tickers)):
@@ -88,13 +91,12 @@ for x in range(len(tickers)):
     buy["stock{0}".format(x)]=onlybuy(mylabels["stock{0}".format(x)])
     sell["stock{0}".format(x)]=onlysell(mylabels["stock{0}".format(x)])
     
-    # Add Period column to stocks: (later do not forget to remove it!)------------------------------------------------
+    # Add Period column to stocks: ------------------------------------------------------------------------------------
     d["stock{0}".format(x)]['Period']=0
     buy["stock{0}".format(x)]['Period']=0
     sell["stock{0}".format(x)]['Period']=0
     
-    # We want evaluation of all stocks for all time periods:
-  
+    # We want evaluation of all stocks for all time periods:  
     for k in range(time_periods): #Number of time periods:
         h=len(d["stock{0}".format(x)])    
         d["stock{0}".format(x)].Period.iloc[((k)*int(h/time_periods)):((k+1)*int(h/time_periods))]=k
@@ -130,11 +132,12 @@ for k in range(time_periods): #Number of time periods:
         X_test_lstm_buy["stock{}-period-{}".format(x, k)], y_test_lstm_buy["stock{}-period-{}".format(x, k)], indices_lstm=prepdata(x_test_buy["stock{}-period-{}".format(x, k)],y_test_buy["stock{}-period-{}".format(x, k)],lookback)
         X_test_lstm_sell["stock{}-period-{}".format(x, k)], y_test_lstm_sell["stock{}-period-{}".format(x, k)], indices_lstm=prepdata(x_test_sell["stock{}-period-{}".format(x, k)],y_test_sell["stock{}-period-{}".format(x, k)],lookback)
         
-        #===============================================================================================================
 
-# LSTM model:  --------------------------------------------------------------------------------------------------   for k in range(time_periods): 
+#######################################################################################################################
+# LSTM MODEL PREPARATION AND TRAINING
+#######################################################################################################################
+
 # The LSTM model requires a special input data structure.
-#######################################################################################################################################
 
 # Define the class_weights for Weighted Binary Cross-entropy function: 
 from sklearn.utils import class_weight
@@ -145,7 +148,6 @@ weights = class_weight.compute_class_weight('balanced',np.unique(y_integers),y_i
 
 weights =np.ones(2)
 weights[0,]=[(len(y_integers)-sum(y_integers))/sum(y_integers),1]
-#####################################################################################################################################x
 
 random.seed(1234)
 
@@ -214,7 +216,6 @@ for k in range(1): # use time periods here later
         
         
 #==========================================================================================================
-
 
 from keras import backend as K
 
