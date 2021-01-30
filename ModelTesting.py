@@ -1,7 +1,8 @@
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.callbacks import TensorBoard
 import time
-
+import seaborn as sns
+import pandas as pd
 
 
 ###################################################################################################################
@@ -388,12 +389,9 @@ results.set_index('Name', inplace=True)
 results.to_excel(r'C:\Users\Peter\Desktop\Resulttables2012.xlsx')
 
 #############################################################################################################
-################################################################################################################xx
+# Create Violin Plots for the Rates of return: 
+#############################################################################################################
 
-# Create Violin Plots for the Rates of return: --------------------------------------------------------------
-##
-import seaborn as sns
-import pandas as pd
 
 sns.set(style="whitegrid")
 sns.set(font_scale=1.3)
@@ -433,21 +431,21 @@ plt.title("Violin plot for the rates of return of different strategies in 2018",
 
 ############################################################################################################################
 
-# Violin plots for the year 2006:
+# Violin plots for the year 2006: ------------------------------------------------------------------
 fig=plt.figure(figsize=(20,10)) 
 ax = sns.violinplot(data=finaltablets6,linewidth=2.5)
 plt.ylabel('Rate of Return', fontsize=14)
 plt.title("Violin plot for the rates of return of different trading strategies in 2006",fontsize=14)
 plt.savefig('violin2006new.png')
 
-# Violin plots for the year 2012:
+# Violin plots for the year 2012: ------------------------------------------------------------------
 fig=plt.figure(figsize=(20,10)) 
 ax = sns.violinplot(data=finaltablets12,linewidth=2.5)
 plt.ylabel('Rate of Return', fontsize=14)
 plt.title("Violin plot for the rates of return of different trading strategies in 2012",fontsize=14)
 plt.savefig('violin2012new.png')
 
-# Violin plots for the year 2018:
+# Violin plots for the year 2018: ------------------------------------------------------------------
 fig=plt.figure(figsize=(20,10)) 
 ax = sns.violinplot(data=finaltablets18,linewidth=2.5)
 plt.ylabel('Rate of Return', fontsize=14)
