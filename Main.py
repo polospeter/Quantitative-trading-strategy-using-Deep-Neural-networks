@@ -38,10 +38,6 @@ from keras.layers import CuDNNLSTM
 # STEP 1--Import stocks -------------------------------------------------------------------------------
 #######################################################################################################
 
-start_date = '2010-01-01'
-end_date = '2018-12-31'
-
-# Period 2:
 start_date =datetime.datetime(2012, 11, 1)
 
 end_date =datetime.datetime(2018, 12, 31)
@@ -50,11 +46,8 @@ tickers = ['MMM','AXP','AAPL','BA','CAT','CVX','CSCO','XOM','GS','HD','IBM','INT
 
 # ETFs:
 tickers=['SPY','QQQ','XLU','XLE','XLP','XLY','EWZ','EWH','XLF']
-#===========================================================================================
-dailyreturn(stock)
-stock=pdr.get_data_yahoo(symbols=tickers[0], start=start_date, end=end_date)
 
-asset=pdr.get_data_yahoo(symbols=tickers[0], start=start_date, end=end_date)
+stock=pdr.get_data_yahoo(symbols=tickers[0], start=start_date, end=end_date)
 
 #######################################################################################################
 # STEP 2--Labeling ------------------------------------------------------------------------------------
@@ -837,13 +830,11 @@ print(np.mean(mymodelreturns))
 ############################################################################################################
 from sklearn.metrics import confusion_matrix
 
-
 predicts=pd.concat(finalsignals.values(), ignore_index=True)
 
 targetbuy=pd.concat(y_test_buy.values(), ignore_index=True)
 targetsell=pd.concat(y_test_sell.values(), ignore_index=True)
 targets=targetsell-targetbuy
-
 
 confusion_matrix(targets, predicts)
 
@@ -860,10 +851,9 @@ plt.xlabel('True label')
 plt.ylabel('Predicted label')
 
 
-
 ############################################################################################################
-
-# Backtest for William R and RSI strategy:
+# BACKTEST for William R and RSI strategy ------------------------------------------------------------------
+############################################################################################################
 
 williamR(df,14)
 
