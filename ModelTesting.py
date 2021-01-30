@@ -3,13 +3,14 @@ from tensorflow.keras.callbacks import TensorBoard
 import time
 import seaborn as sns
 import pandas as pd
+import random
 
+#########################################################################################################################
+# FINAL VERSION OF THE GROUP BACKTEST FUNCTION
+#########################################################################################################################
 
-###################################################################################################################
-###################################################################################################################
-
-# Final version of group BACKTEST function: -----------------------------------------------------------------------------
-# It is the version of the Backtesting function that can take multiple stocks as inputs for a given time period, and will run the backtest for each one of them.
+# It is the version of the Backtesting function that can take multiple stocks as inputs for a given time period,
+# and will run the backtest for each one of them.
 
 # DOW30 stocks
 tickers = ['MMM','AXP','AAPL','BA','CAT','CVX','CSCO','XOM','GS','HD','IBM','INTC','JNJ','KO','JPM','MCD','MMM','MRK','MSFT','NKE','PFE','PG','TRV','UNH','UTX','VZ','WMT','WBA','DIS'] # all these stocks have data from 2001
@@ -22,9 +23,9 @@ lookback=7 # for LSTM
 
 time_periods=1
 
+#---------------------------------------------------------------------------------------------------------------------
+# Here we initialize the necessary train and test container datasets for the Buy and Sell signals.
 
-#################################################################################################x
-# Here we initialize the necessary train and test datasets for the Buy and Sell signals.
 d={}
 dd={}
 mylabels={}
@@ -50,12 +51,13 @@ y_train_sell={}
 x_test_sell={}
 y_test_sell={}
 
-
+# Buy for LSTM mode:
 X_train_lstm_buy={}
 y_train_lstm_buy={}
 X_test_lstm_buy={}
 y_test_lstm_buy={}
 
+# Sell for LSTM mode:
 X_train_lstm_sell={}
 y_train_lstm_sell={}
 X_test_lstm_sell={}
@@ -91,7 +93,7 @@ for x in range(len(tickers)):
     buy["stock{0}".format(x)]['Period']=0
     sell["stock{0}".format(x)]['Period']=0
     
-# We want evaluation of all stocks for all time periods:
+    # We want evaluation of all stocks for all time periods:
   
     for k in range(time_periods): #Number of time periods:
         h=len(d["stock{0}".format(x)])    
@@ -145,12 +147,9 @@ weights =np.ones(2)
 weights[0,]=[(len(y_integers)-sum(y_integers))/sum(y_integers),1]
 #####################################################################################################################################x
 
-import random
 random.seed(1234)
 
-
-
-#            Train each Model on only one stock data: --------------------------------------------
+# Train each Model on only one stock data: --------------------------------------------
 
 sell_saved = sell_lstm.get_weights()
 buy_saved = buy_lstm.get_weights()
@@ -295,9 +294,10 @@ for k in range(1): # use time periods here later
         lstm_sell_array2006[:,x]=np.ravel(sellsignals["stock{0}".format(x)])
 
 
-###########################################################################################################       
+###########################################################################################################
+# SAVE THE RESULTS INTO A CSV
+###########################################################################################################
 
-# Save them into a CSV:
 np.savetxt("Sellsignals2006.csv", sell_array2006, delimiter=",")
 np.savetxt("Buysignals2006.csv", buy_array2006, delimiter=",")
 
@@ -314,12 +314,11 @@ import csv
 with open("Sellsignals2012.csv", newline='') as csvfile:
     selldata = list(csv.reader(csvfile))
  
-
     np.genfromtxt(r'C:\Users\Peter\Desktop\Master thesis\table18.csv', delimiter=',')
  C:\Users\Peter\Desktop\University\Thesis\Python code\Sellsignals2012.csv  
 
  
- # Testing period 2012:   
+# Testing period 2012: 
 sell_array2012 = np.genfromtxt(r"C:\Users\Peter\Desktop\University\Thesis\Python code\Sellsignals2012.csv", delimiter=',') # Okay this one works
 buy_array2012= np.genfromtxt(r"C:\Users\Peter\Desktop\University\Thesis\Python code\Buysignals2012.csv", delimiter=',')
 
@@ -429,7 +428,7 @@ ax = sns.violinplot(data=finaltablets18)
 plt.ylabel('Rate of Return', fontsize=14)
 plt.title("Violin plot for the rates of return of different strategies in 2018",fontsize=15)
 
-############################################################################################################################
+#---------------------------------------------------------------------------------------------------
 
 # Violin plots for the year 2006: ------------------------------------------------------------------
 fig=plt.figure(figsize=(20,10)) 
