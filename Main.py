@@ -210,7 +210,7 @@ sell_model=load_model('freshstart_sell_bestmodel.hdf5',custom_objects={'dice_coe
 buy_model=load_model('freshstart_buy_bestmodel.hdf5',custom_objects={'dice_coef_losss':dice_coef_losss})
 
 #######################################################################################################
-# STEP 5 Model Evaluation:
+# STEP 5 Model Evaluation: ----------------------------------------------------------------------------
 #######################################################################################################
 
 # Buy:
@@ -224,7 +224,6 @@ sellsignals=modeleval(sell_model,stock,x_test1,y_test1,0.4)
 
 sellsignals=modelevalshort(sell_model,stock,x_test1,y_test1,0.5)
 
-
 threshold=0.5
     buysignals = buy_model.predict(x_test2) 
     buysignals[buysignals<threshold]=0 
@@ -232,38 +231,9 @@ threshold=0.5
     buysignals=-buysignals # -1 is the label for buysignal
     preds_buy=pd.DataFrame(buysignals,index=y_test_lstm_buy["stock{}-period-{}".format(x,k)].index,columns=["label"])
     #plotlabels(dd["stock{0}".format(x)],preds_buy)
-
-#--------------------------------------------------------------------------------------------------------------
-
-        filepath="weights-improvement-{epoch:02d}-{val_acc:.2f}.hdf5" # in this case it would not only save the best version of the Model
-        
-        #model.compile(optimizer='adam',loss='sparse_categorical_crossentropy',metrics=['accuracy']) -- check the different methods later on!!
-        checkpoint = ModelCheckpoint(filepath='keras_buy_gettingthere.hdf5',monitor='loss', verbose=1, save_best_only=True, mode='min')
-        callbacks_list = [checkpoint]
-
-#----------------------------------------------------------------------------
-finalsignals=modeleval(model,stock,x_test1,y_test1,0.5)
-
-# Sell model:
-sellsignals=modeleval(sellmodel,stock,x_test1,y_test1,0.5)
-
-#---------------------------------------------------------------------------------------------------
-
-fig=plt.figure(figsize=(14,7)) 
-plt.plot(stock[0:500])
-
+    
 ########################################################################################################
-# STEP 6- Clean up labels ------------------------------------------------------------------------------
-########################################################################################################
-
-finalsignals=samelabels(finalsignals)
-
-plotlabels(stock,finalsignals)
-
-y_test[["Buy","Wait"]]
-
-########################################################################################################
-# STEP 7--Combine the Buy and Sell signal predictions --------------------------------------------------
+# STEP 6--Combine the Buy and Sell signal predictions --------------------------------------------------
 ########################################################################################################
 
 comblabel=pd.concat([sellsignals,buysignals])
@@ -272,18 +242,21 @@ comblabel=svm_y_test_pred_sell.label+svm_y_test_pred_buy.label
 
 comblabel=pd.DataFrame(comblabel,columns=["label"])
 
-finalsignals=samelabels(comblabel) # Remove same labels
+# Remove consecutive same labels:
+finalsignals=samelabels(comblabel)
 
 # Plot final signals:
 plotlabels(stock,finalsignals)
 
 #######################################################################################################
-# STEP 8--Model Backtesting ---------------------------------------------------------------------------
+# STEP 7--Model Backtesting ---------------------------------------------------------------------------
 #######################################################################################################
 
 backtest(finalsignals,stock,initcapital=10000) # we set the initial capital for backtesting to be $10000
 
 #######################################################################################################
+
+
 # Check predictions manually:
 predictt=model.predict(x_test)
 predictt=pd.DataFrame(predictt,index=x_test.index)
@@ -473,23 +446,22 @@ for k in range(time_periods): #Number of time periods:
     mlp_datacombined5["period-{0}".format(k)]=mlp_col5
                     
     #--------------------------------------------------------------------------------       
-# Buy   
+    # Buy   
     mlp_datacombined_buy_xtrain["period-{0}".format(k)]=np.concatenate(mlp_datacombined["period-{0}".format(k)])
     mlp_datacombined_buy_ytrain["period-{0}".format(k)]=np.concatenate(mlp_datacombined1["period-{0}".format(k)])
     mlp_datacombined_buy_xtest["period-{0}".format(k)]=np.concatenate(mlp_datacombined2["period-{0}".format(k)])
  
-# Sell
+    # Sell
     mlp_datacombined_sell_xtrain["period-{0}".format(k)]=np.concatenate(mlp_datacombined3["period-{0}".format(k)])
     mlp_datacombined_sell_ytrain["period-{0}".format(k)]=np.concatenate(mlp_datacombined4["period-{0}".format(k)])
     mlp_datacombined_sell_xtest["period-{0}".format(k)]=np.concatenate(mlp_datacombined5["period-{0}".format(k)])
     #--------------------------------------------------------------------------------
     
-###################################################################################################################
+####################################################################################################
+# RUN MODEL: ---------------------------------------------------------------------------------------
+####################################################################################################
 
 k=2
-
-#... Run the Model::--------------------------------------------------------------------------------
-
        # Building the model-- here comes the model itself
         model = Sequential()
         model.add(Dense(128, input_shape=x_train1.shape[1:]))
@@ -512,12 +484,12 @@ k=2
         opt= keras.optimizers.adam(lr=0.0001,beta_2=0.999) #
         model.compile(loss=dice_coef_losss, optimizer=opt, metrics=['accuracy'])
         
-#----------------------------------------------------------------------------------------------------------------------        
+        #----------------------------------------------------------------------------------------------------------------------        
         #Sell:
         checkpoint = ModelCheckpoint(filepath='fresh_combined_sell_bestmodel.hdf5',monitor='val_loss', verbose=1, save_best_only=True, mode='min')
         callbacks_list = [checkpoint]
         
-#----------------------------------------------------------------------------------------------------------------------       
+        #----------------------------------------------------------------------------------------------------------------------       
         #Buy:
         checkpoint = ModelCheckpoint(filepath='fresh_combined_buy_bestmodel.hdf5',monitor='val_loss', verbose=1, save_best_only=True, mode='min')
         callbacks_list = [checkpoint]
@@ -538,7 +510,6 @@ sell_model=load_model('freshstart_sell_bestmodel.hdf5',custom_objects={'dice_coe
 buy_model=load_model('freshstart_buy_bestmodel.hdf5',custom_objects={'dice_coef_losss':dice_coef_losss})
 
 #######################################################################################################################x
-
 
 finalsignals={}
 a=[]
@@ -760,6 +731,9 @@ for k in range(1): # use time periods here later
         sell_array2006[:,x]=np.ravel(sellsignals["stock{0}".format(x)])
 
 
+####################################################################################################
+# SAVE RESULTS INTO CSV ----------------------------------------------------------------------------
+####################################################################################################
 
 # Save them into a CSV:
 np.savetxt("Sellsignals2006.csv", sell_array2006, delimiter=",")
@@ -768,12 +742,10 @@ np.savetxt("Buysignals2006.csv", buy_array2006, delimiter=",")
 np.savetxt("Sellsignals2012.csv", sell_array2012, delimiter=",")
 np.savetxt("Buysignals2012.csv", buy_array2012, delimiter=",")
 
-
 np.savetxt("Sellsignals2018new.csv", sell_array2018, delimiter=",")
 np.savetxt("Buysignals2018new.csv", buy_array2018, delimiter=",")
 
- 
-#===================================================================================================================
+#--------------------------------------------------------------------------------------------------
 
 # Testing period 2006:
 sell_array2006 = np.genfromtxt("Sellsignals2006.csv", delimiter=',')
@@ -786,7 +758,7 @@ buy_array2012= np.genfromtxt("Buysignals2012.csv", delimiter=',')
 # Testing period 2018:
 sell_array2018 = np.genfromtxt("Sellsignals2018.csv", delimiter=',') 
 buy_array2018= np.genfromtxt("Buysignals2018.csv", delimiter=',')
-#=====================================================================================================================
+#---------------------------------------------------------------------------------------------------
 
      
 a=[]
@@ -798,19 +770,19 @@ finalsignals={}
 for k in range(1): # use time periods here later
     for x in range(6,7):  # all stock one by one           
         
-        # Buy signals:------------------------------------------------------------------------------------------
+        # Buy signals:-----------------------------------------------------------------------------
         thresholdbuy=0.5 #probability threshold
         buysig=buy_array2006[:,x]
         buysig[buysig<thresholdbuy]=0 
         buysig[buysig>=thresholdbuy]=-1
         
-        # SELL:  ---------------------------------------
+        # SELL:  ----------------------------------------------------------------------------------
         thresholdsell=0.5
         sellsig = sell_array2006[:,x]
         sellsig[sellsig<thresholdsell]=0 
         sellsig[sellsig>=thresholdsell]=1
        
-         # Combine Buy and Sell: ------------------------
+         # Combine Buy and Sell: ------------------------------------------------------------------
         combinedlabel=buysig+sellsig
         finalsignal=pd.DataFrame(combinedlabel,index=y_test_buy["stock{}-period-{}".format(x,k)].index,columns=["label"])    
         finalsignals["stock{0}".format(x)]=samelabels(finalsignal)
@@ -843,13 +815,11 @@ labels=[-1,0,1]
 # Classification report:---------------------------------------------------------------
 print(classification_report(targets,predicts,labels=labels))
     
-    
 #Confusion matrix ---------------------------------------------------------------------
 mat = confusion_matrix(ytestma, predlabelss.label)
 sns.heatmap(mat, square=True, annot=True, fmt='d', cbar=False,xticklabels=labels,yticklabels=labels) 
 plt.xlabel('True label')
 plt.ylabel('Predicted label')
-
 
 ############################################################################################################
 # BACKTEST for William R and RSI strategy ------------------------------------------------------------------
