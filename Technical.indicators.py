@@ -133,7 +133,12 @@ def rsi(df,x):
     df['RSI_'+str(x)] = df[['Close']].apply(RSI,xx=x)
     return df
 
+######################################################################################################################
 # Formula for the Dice Loss function: --------------------------------------------------------------------
+
+# Dice Loss is the loss function we are going to use for our neural network model, it is more effective than traditional
+# loss functions incase we are dealing with minority class problems, where are target class, represent only a tiny portion
+# of the whole sample.
 
 import keras.backend as K
 
@@ -166,7 +171,7 @@ def dice_coef(y_true, y_pred, smooth=1):
 def dice_coef_loss(y_true, y_pred):
     return 1-dice_coef(y_true, y_pred)
 
-##########################################################################################################
+#----------------------------------------------------------------------------------------------------
 
 def dice_coefic(y_true, y_pred):
     smooth=1e-5
