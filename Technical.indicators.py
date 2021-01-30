@@ -67,14 +67,20 @@ def stochasticline(df,x):
     df['stochastic_d_'+str(x)]=df['stochastic_k_'+str(x)].rolling(window=3, min_periods=0).mean()
     return df
 
-#------------------------------------------------------------------------------------------------------
-# Williams %R
+"""
+    -----------------------------------------------------------------------------
+    Williams %R
+    -----------------------------------------------------------------------------
+"""
 def williamR(df,x):
     df['William_R%_'+str(x)]=100*(df['High'].rolling(window=x, min_periods=0).max()-df['Close'])/(df['High'].rolling(window=x, min_periods=0).max()-df['Low'].rolling(window=x, min_periods=0).min())
     return df
 
-#-------------------------------------------------------------------------------------------------------
-# Average True Range- ATR
+"""
+    -----------------------------------------------------------------------------
+    Average True Range- ATR
+    -----------------------------------------------------------------------------
+"""
 def atr(df,x):
     data1=df['High']-df['Low']
     data2=abs(df['Low']-df['Close'].shift(1,fill_value=df['Close'][1]))
