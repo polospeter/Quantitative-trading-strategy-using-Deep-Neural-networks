@@ -7,7 +7,7 @@ import datetime
 import matplotlib.pyplot as plt
 import keras
 from keras.callbacks import ModelCheckpoint
-from keras.models import Sequential # neural network
+from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation
 from keras.models import Sequential
 from keras.layers import LSTM, Dense, Dropout,Flatten
@@ -23,7 +23,6 @@ import pandas_datareader as pdr
 from datetime import datetime
 from tensorflow.keras.callbacks import TensorBoard
 import time
-import datetime #solution for datetime error
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from keras.layers import CuDNNLSTM
@@ -31,7 +30,7 @@ from keras.layers import CuDNNLSTM
 
 """
     ==================================================================================================
-                           RUNNING THE TRADING ALGORITHM ON INDIVIDUAL STOCKS
+                           RUNNING THE TRADING ALGORITHM ON AN INDIVIDUAL STOCK
     ==================================================================================================
 """ 
 
