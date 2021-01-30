@@ -3,34 +3,50 @@
 import sys
 import pandas as pd
 
-#-----------------------------------------------------------------------------------------------------------------
-# Daily returns
+# Most of the following technical analysis indicators require two inputs, df: a timeseries and x: size of windows/time interval,
+# which for the metric will be calculated, e.g a 14 day moving average of the Apple stock
+
+"""
+    -----------------------------------------------------------------------------
+    Daily returns
+    -----------------------------------------------------------------------------
+"""
 def dailyreturn(df):
     df['returns']=df['Close']/df['Close'].shift(1,fill_value=df['Close'][1])-1
     return df
 
-#-----------------------------------------------------------------------------------------------------------------
-# Moving average
+"""
+    -----------------------------------------------------------------------------
+    Moving average
+    -----------------------------------------------------------------------------
+"""
 def ma(df,x):
     df['ma_'+str(x)] = df['Close'].ewm(span=x,min_periods=0,adjust=True,ignore_na=False).mean() # exponential weighted functions
     df['ma_ratio_'+str(x)] = df['ma_'+str(x)] /  df['Close']
     df['ma_inc_'+str(x)] = df['ma_'+str(x)] / df['ma_'+str(x)].shift(1) -1
     return df
 
-#-------------------------------------------------------------------------------------------------------------------
-# Bias
+"""
+    -----------------------------------------------------------------------------
+    Bias
+    -----------------------------------------------------------------------------
+"""
 def bias(df,x):
     df['bias_'+str(x)]=df['Close'].rolling(window=x, min_periods=0).mean()-df['Close']
     return df
 
-#-------------------------------------------------------------------------------------------------------------------
-# Macd - Moving average Convergence and divergence
+"""
+    -----------------------------------------------------------------------------
+    Macd - Moving average Convergence and divergence
+    -----------------------------------------------------------------------------
+"""
 def macd(df,x,y):
     df['macd'] = (df['Close'].ewm(span=x,min_periods=0,adjust=True,ignore_na=False).mean()) - (df['Close'].ewm(span=y,min_periods=0,adjust=True,ignore_na=False).mean())
     return df
 
 #------------------------------------------------------------------------------------------------------------------
 # Bollinger bands
+
 def bollinger(df,x):
     df['bb_up_'+str(x)] = df['Close'].rolling(window=x, min_periods=0).mean() + (df['Close'].rolling(window=x, min_periods=0).std() * 2)
     df['bb_down_'+str(x)] = df['Close'].rolling(window=x, min_periods=0).mean() - (df['Close'].rolling(window=x, min_periods=0).std() * 2)
