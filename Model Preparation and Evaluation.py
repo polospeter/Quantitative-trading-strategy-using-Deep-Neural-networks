@@ -19,7 +19,7 @@ from keras.models import Sequential # neural network
 from keras import initializers
 
 ###########################################################################################################################
-#------ MODEL PREPARATION -------------------------------------------------------------------------------------------------
+#    MODEL PREPARATION 
 ###########################################################################################################################
 
 def modelprep(stockname,labels,startdate,enddate,trainratio,signalname="Sell"):
@@ -110,8 +110,6 @@ def modelprep(stockname,labels,startdate,enddate,trainratio,signalname="Sell"):
     
     if numsig>4: # we know that the first 5 are the price values of the stock
         scaler = MinMaxScaler(feature_range=(-1, 1), copy=False)
-
-    # INPUT variables: 
     
     # Train set =======================================================================================================
     
@@ -193,7 +191,7 @@ def modelprep(stockname,labels,startdate,enddate,trainratio,signalname="Sell"):
 
 
 ######################################################################################################################
-#------ MODEL EVALUATION ---------------------------------------------------------------------------------------------
+#   MODEL EVALUATION 
 ######################################################################################################################
 
 def modeleval(model,stockname,x_test,y_test,threshold=0.5):
@@ -218,7 +216,7 @@ def modeleval(model,stockname,x_test,y_test,threshold=0.5):
         predlabelss=pd.DataFrame(predlabels)      
         predlabelss.columns=['label']    
         
-    #         #Use the written labels instead of the numbers:
+    # Use the written labels instead of the numbers:
         predlabelss[predlabelss.label==1]=y_test.columns[0]
         predlabelss[predlabelss.label==0]="Others"
              
@@ -229,11 +227,9 @@ def modeleval(model,stockname,x_test,y_test,threshold=0.5):
         labels = ["Buy","Others"]
    
     #==========================================================================================================           
-    #y_testmax=pd.DataFrame(y_test.idxmax(axis=1, skipna=True)) # ??? what is this used for???
 
     ytestma=y_test
     ytestma=pd.DataFrame(y_test)
-    #ytestma[ytestma==-1]=ytestma.columns[0]
     ytestma[ytestma==1]=ytestma.columns[0]
     ytestma[ytestma==0]="Others"
     
@@ -246,14 +242,15 @@ def modeleval(model,stockname,x_test,y_test,threshold=0.5):
     plt.xlabel('true label')
     plt.ylabel('predicted label')
 
-    #================================================================================================================
-     # Visualize the predicted labels --------------------------------------------------------------------
+    #=======================================================================================
+    
+    # Visualize the predicted labels ------------------------------------------------------ 
     stock=stockname
     test_start=y_test.index[0]
     test_end=y_test.index[-1]
     stocktest=stock[(stock.index>=test_start) & (stock.index<=test_end)]
 
-    #================================================================================================================
+    #======================================================================================
     if b==1: # Incase of Sell and Hold-- Binary (one column only)
       
         predlabels=np.zeros(a)
@@ -283,7 +280,7 @@ def modeleval(model,stockname,x_test,y_test,threshold=0.5):
     return d 
 
 #########################################################################################################################
-#-------- SHORT MODEL EVALUATION
+#    SHORT MODEL EVALUATION
 #########################################################################################################################
 
 # It is a cleaned up version of the ModelEval function, focusing of Binary predicting models:
@@ -311,8 +308,6 @@ def modelevalshort(model,stockname,x_test,y_test,threshold=0.5):
         labels = ["Buy","Others"]
         
     #==========================================================================================================           
-    #y_testmax=pd.DataFrame(y_test.idxmax(axis=1, skipna=True)) # ??? what is this used for???
-
     ytestma=y_test  
     ytestma=pd.DataFrame(y_test)
     ytestma[ytestma==1]=ytestma.columns[0]
@@ -321,7 +316,7 @@ def modelevalshort(model,stockname,x_test,y_test,threshold=0.5):
     # Classification report:---------------------------------------------------------------
     print(classification_report(ytestma,predlabelss.label))
       
-    #Confusion matrix ---------------------------------------------------------------------
+    # Confusion matrix ---------------------------------------------------------------------
     mat = confusion_matrix(ytestma,predlabelss.label,labels=labels)
     sns.heatmap(mat.T, square=True, annot=True, fmt='d', cbar=False,xticklabels=labels,yticklabels=labels) 
     plt.xlabel('true label')
@@ -341,9 +336,8 @@ def modelevalshort(model,stockname,x_test,y_test,threshold=0.5):
          
     return predictions2
 
-
 ################################################################################################################################
-#------ BACKTESTING ---------------------------------------------------------------------------
+#    BACKTESTING 
 ################################################################################################################################
 
 def backtest(labels,stock,initcapital=10000,tradingcost=0.005,name="Stock"):
@@ -355,7 +349,7 @@ def backtest(labels,stock,initcapital=10000,tradingcost=0.005,name="Stock"):
     stocktest=stock[(stock.index>=predlabelss.index[0]) & (stock.index<=predlabelss.index[-1])] 
     
     # Time points where we buy new stocks:
-    buysignals=predlabelss.index[predlabelss.label==-1].tolist() # I think I do not even use these!!
+    buysignals=predlabelss.index[predlabelss.label==-1].tolist()
     
     # Time points where we sell new stocks:
     sellsignals=predlabelss.index[predlabelss.label==1].tolist()
@@ -365,7 +359,7 @@ def backtest(labels,stock,initcapital=10000,tradingcost=0.005,name="Stock"):
     positions=[0] * t
     numstocks=[0] * t # number of stocks
         
-    numberstocks=0 # initial we do not own any stocks
+    numberstocks=0 # initialy we do not own any stocks
     
     # Set the initial capital
     capital=initcapital
@@ -428,7 +422,7 @@ def backtest(labels,stock,initcapital=10000,tradingcost=0.005,name="Stock"):
     return bhreturn-1, modelreturn-1
 
 #########################################################################################################################   
-#------ MODEL PREPARATION (SHORT VERSION) ---------------------------------------------------------------------------------
+#    MODEL PREPARATION (SHORT VERSION) 
 #########################################################################################################################
 
 def modelprepshort(stockname,labels):
@@ -447,7 +441,7 @@ def modelprepshort(stockname,labels):
     train_start = stock.index.min()
     train_end = stock.index.max()
     
-     #---------------------------Define trainig period ----------------(later cross validation rather)------
+     #--------Define trainig period -------------------------------
   
     hossz=len(stock.index) # number of indices,before removing NAN-s
         
@@ -468,14 +462,11 @@ def modelprepshort(stockname,labels):
         
     stock.dropna(inplace=True) #!!!!!
     stock =stock[~stock.isin([np.nan, np.inf, -np.inf]).any(1)]
-    
-    # Optional:
-    #stock=stock.drop('Volume', axis=1)
-    
+
     #--- Scaling of the dataset and features--------------------------------------------------------------------------------------------
 
     from sklearn.preprocessing import MinMaxScaler
-    scaler = MinMaxScaler(feature_range=(0, 1), copy=False)  # these is other type scaler as well
+    scaler = MinMaxScaler(feature_range=(0, 1), copy=False)
     #scaler = StandardScaler(copy=False) #need changes   
     
     # Train set =======================================================================================================
@@ -492,7 +483,7 @@ def modelprepshort(stockname,labels):
     return X_train, y_train    
 
 #########################################################################################################################   
-#------ PREPARE INPUTS FOR LSTM MODELS ---------------------------------------------------------------------------------
+#    PREPARE INPUTS FOR LSTM MODELS 
 #########################################################################################################################
 
 def prepdata(x_test2,y_test2,sequence_length):
