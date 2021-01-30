@@ -122,7 +122,7 @@ for k in range(time_periods): #Number of time periods:
         x_train_buy["stock{}-period-{}".format(x, k)], x_test_buy["stock{}-period-{}".format(x, k)], y_train_buy["stock{}-period-{}".format(x, k)], y_test_buy["stock{}-period-{}".format(x, k)]= train_test_split(d["stock{}-period-{}".format(x, k)], buy["stock{}-period-{}".format(x, k)], test_size=0.167,shuffle=False)
         x_train_sell["stock{}-period-{}".format(x, k)], x_test_sell["stock{}-period-{}".format(x, k)], y_train_sell["stock{}-period-{}".format(x, k)], y_test_sell["stock{}-period-{}".format(x, k)]= train_test_split(d["stock{}-period-{}".format(x, k)],sell["stock{}-period-{}".format(x, k)], test_size=0.167,shuffle=False)
     
-        # This should be an optional section for LSTM ==================================================================
+        # This is an optional section for LSTM: ======================================================================
         
         # Prepare Train data for LSTM: --------------------------------------------------------------------------------
         X_train_lstm_buy["stock{}-period-{}".format(x, k)], y_train_lstm_buy["stock{}-period-{}".format(x, k)], indices_lstm=prepdata(x_train_buy["stock{}-period-{}".format(x, k)],y_train_buy["stock{}-period-{}".format(x, k)],lookback) # look back is 7 days
@@ -266,8 +266,6 @@ for k in range(1): # use time periods here later
     
    
 #####################################################################################################################
-#####################################################################################################################
-
 
 
 lstm_buy_array2006=np.zeros((len(buysignals["stock2"]),30))
@@ -370,9 +368,10 @@ print(np.mean(buyandholdreturns))
 print(np.mean(mymodelreturns))
     
     
-#=======================================================================================================================
-# BACKTEST:  
-        
+###########################################################################################################
+# QUICK BACKTEST:
+###########################################################################################################
+                                 
 for k in range(2,3): # use time periods here later
     for x in range(len(tickers)):  # all stock one by one
         
@@ -391,7 +390,6 @@ results.to_excel(r'C:\Users\Peter\Desktop\Resulttables2012.xlsx')
 #############################################################################################################
 # Create Violin Plots for the Rates of return: 
 #############################################################################################################
-
 
 sns.set(style="whitegrid")
 sns.set(font_scale=1.3)
