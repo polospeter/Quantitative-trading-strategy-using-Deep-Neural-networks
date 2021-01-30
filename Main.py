@@ -29,6 +29,12 @@ from sklearn.preprocessing import StandardScaler
 from keras.layers import CuDNNLSTM
 
 
+"""
+    ==================================================================================================
+                           RUNNING THE TRADING ALGORITHM ON INDIVIDUAL STOCKS
+    ==================================================================================================
+""" 
+
 #######################################################################################################
 # STEP 1--Import stocks -------------------------------------------------------------------------------
 #######################################################################################################
@@ -100,7 +106,7 @@ y_integers = np.argmax(np.array(y_train), axis=1)
 weights = class_weight.compute_class_weight('balanced',np.unique(y_integers),y_integers)
 
 #######################################################################################################
-# STEP 4--Run the Model-------------------------------------------------------------------------------
+# STEP 4 A)--Run Sell Model----------------------------------------------------------------------------
 #######################################################################################################
 
 # Create the Neural network for predicting the Sell signals
@@ -146,9 +152,12 @@ from keras import backend as K
         sell_model=load_model('singlestock_sell_bestmodel.hdf5',custom_objects={'dice_coef_losss':dice_coef_losss})
 
         sellsignals["stock{0}".format(x)] = sell_model.predict(x_test_sell["stock{}-period-{}".format(x,k)]) 
+        
 
+#######################################################################################################
+# STEP 4 B)--Run Buy Model-----------------------------------------------------------------------------
+#######################################################################################################
 
-#==========================================================================================================
 buysignals={}
 
 # Create the Neural network for predicting the BUY signals
@@ -198,8 +207,7 @@ buysignals={}
         K.clear_session() # clear up memory
 
 
-
-#==========================================================================================================================
+# Load the best models: -------------------------------------------------------------------------------
         
 preds=model.predict(x_test1) #predictions
 
@@ -232,15 +240,14 @@ threshold=0.5
     buysignals=-buysignals # -1 is the label for buysignal
     preds_buy=pd.DataFrame(buysignals,index=y_test_lstm_buy["stock{}-period-{}".format(x,k)].index,columns=["label"])
     #plotlabels(dd["stock{0}".format(x)],preds_buy)
-#______________________________________________________________________________________________________
+
+#--------------------------------------------------------------------------------------------------------------
 
         filepath="weights-improvement-{epoch:02d}-{val_acc:.2f}.hdf5" # in this case it would not only save the best version of the Model
         
         #model.compile(optimizer='adam',loss='sparse_categorical_crossentropy',metrics=['accuracy']) -- check the different methods later on!!
         checkpoint = ModelCheckpoint(filepath='keras_buy_gettingthere.hdf5',monitor='loss', verbose=1, save_best_only=True, mode='min')
         callbacks_list = [checkpoint]
-
-
 
 #----------------------------------------------------------------------------
 finalsignals=modeleval(model,stock,x_test1,y_test1,0.5)
@@ -253,19 +260,22 @@ sellsignals=modeleval(sellmodel,stock,x_test1,y_test1,0.5)
 fig=plt.figure(figsize=(14,7)) 
 plt.plot(stock[0:500])
 
-# Clean up labels:
+########################################################################################################
+# STEP 6- Clean up labels ------------------------------------------------------------------------------
+########################################################################################################
+
 finalsignals=samelabels(finalsignals)
 
 plotlabels(stock,finalsignals)
 
 y_test[["Buy","Wait"]]
 
+########################################################################################################
+# STEP 7--Combine the Buy and Sell signal predictions --------------------------------------------------
+########################################################################################################
 
-#________________________________________________________________________________________________________
-# Step 5--Combine the Buy and Sell signal predictions:------------------------------------------------------------------------
 comblabel=pd.concat([sellsignals,buysignals])
 
-#-------------
 comblabel=svm_y_test_pred_sell.label+svm_y_test_pred_buy.label
 
 comblabel=pd.DataFrame(comblabel,columns=["label"])
@@ -276,12 +286,12 @@ finalsignals=samelabels(comblabel) # Remove same labels
 plotlabels(stock,finalsignals)
 
 #######################################################################################################
-# STEP 6--Model Backtesting ---------------------------------------------------------------------------
+# STEP 8--Model Backtesting ---------------------------------------------------------------------------
 #######################################################################################################
 
 backtest(finalsignals,stock,initcapital=10000) # we set the initial capital for backtesting to be $10000
 
-#_______________________________________________________________________________________________________
+#######################################################################################################
 # Check predictions manually:
 predictt=model.predict(x_test)
 predictt=pd.DataFrame(predictt,index=x_test.index)
@@ -300,6 +310,13 @@ weights = class_weight.compute_class_weight('balanced',np.unique(y_integers),y_i
 weights = class_weight.compute_class_weight('balanced',np.unique(y_train),y_train)
 
 weights=[10,10,0.5,0.5]
+
+
+"""
+    ==================================================================================================
+                           RUNNING THE TRADING ALGORITHM ON A GROUP OF STOCKS
+    ==================================================================================================
+"""
 
 # Dow30 stocks:
 
@@ -380,7 +397,7 @@ for x in range(len(tickers)):
     buy["stock{0}".format(x)]['Period']=0.5
     sell["stock{0}".format(x)]['Period']=0.5
     
-# We want evaluation of all stocks for all time periods:
+    # We want evaluation of all stocks for all time periods:
   
     for k in range(time_periods): #Number of time periods:
         h=len(d["stock{0}".format(x)])    
