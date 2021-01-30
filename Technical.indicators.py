@@ -3,7 +3,7 @@
 import sys
 import pandas as pd
 
-# Most of the following technical analysis indicators require two inputs, df: a timeseries and x: size of windows/time interval,
+# Most of the following technical analysis indicators require two inputs, df: a timeseries and x: size of window/time interval,
 # which for the metric will be calculated, e.g a 14 day moving average of the Apple stock
 
 """
@@ -44,9 +44,11 @@ def macd(df,x,y):
     df['macd'] = (df['Close'].ewm(span=x,min_periods=0,adjust=True,ignore_na=False).mean()) - (df['Close'].ewm(span=y,min_periods=0,adjust=True,ignore_na=False).mean())
     return df
 
-#------------------------------------------------------------------------------------------------------------------
-# Bollinger bands
-
+"""
+    -----------------------------------------------------------------------------
+    Bollinger bands
+    -----------------------------------------------------------------------------
+"""
 def bollinger(df,x):
     df['bb_up_'+str(x)] = df['Close'].rolling(window=x, min_periods=0).mean() + (df['Close'].rolling(window=x, min_periods=0).std() * 2)
     df['bb_down_'+str(x)] = df['Close'].rolling(window=x, min_periods=0).mean() - (df['Close'].rolling(window=x, min_periods=0).std() * 2)
@@ -55,8 +57,11 @@ def bollinger(df,x):
     df['bb_down_'+str(x)] = df['bb_down_'+str(x)] / df['Close'] -1
     return df
 
-#----------------------------------------------------------------------------------------------------
-# Stochastic line
+"""
+    -----------------------------------------------------------------------------
+    Stochastic line
+    -----------------------------------------------------------------------------
+"""
 def stochasticline(df,x):
     df['stochastic_k_'+str(x)]=100*(df['Close']-df['Low'].rolling(window=x, min_periods=0).min())/(df['High'].rolling(window=x, min_periods=0).max()-df['Low'].rolling(window=x, min_periods=0).min())
     df['stochastic_d_'+str(x)]=df['stochastic_k_'+str(x)].rolling(window=3, min_periods=0).mean()
