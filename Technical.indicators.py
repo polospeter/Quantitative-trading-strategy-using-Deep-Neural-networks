@@ -91,15 +91,21 @@ def atr(df,x):
     df['ATR_'+str(x)]=bigdatamax.rolling(window=x, min_periods=0).mean()
     return df
 
-#-------------------------------------------------------------------------------------------------------
-# Commodity Channel Index
+"""
+    -----------------------------------------------------------------------------
+    Commodity Channel Index
+    -----------------------------------------------------------------------------
+"""
 def cci(df,x):
     tp=(df['Close']+df['High']+df['Low'])/3
     df['CCI_'+str(x)]=(tp-tp.rolling(window=x, min_periods=0).mean())/(0.015*tp.rolling(x, min_periods=0).std())
     return df
 
-#--------------------------------------------------------------------------------------------------------
-# RSI- Relative Strength Index
+"""
+    -----------------------------------------------------------------------------
+    RSI- Relative Strength Index
+    -----------------------------------------------------------------------------
+"""
 def RSI(series,xx):
     delta = series.diff().dropna() # daily price change
     period = xx
@@ -127,15 +133,6 @@ def rsi(df,x):
     df['RSI_'+str(x)] = df[['Close']].apply(RSI,xx=x)
     return df
 
-#--------------------------------------------------------------------------------------------------------
-# Aroon Oscillator
-def aroonosc(df,x):
-    arohigh=100
-    arolow=0
-    df['Aroon Oscillator_'+str(x)] =arohigh-arolow
-    return df
---------------------------------------------------------------------------------------------------------
-
 # Formula for the Dice Loss function: --------------------------------------------------------------------
 
 import keras.backend as K
@@ -153,8 +150,7 @@ def dice_loss(smooth, thresh):
     return 1-dice_coef(y_true, y_pred, smooth, thresh)
   return dice
 
-#-------------------------------------------------------------------------------------------------
-#########################################################################################################
+#---------------------------------------------------------------------------------------------------
 
 from keras import backend as K
 
