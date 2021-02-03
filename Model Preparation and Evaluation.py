@@ -196,6 +196,29 @@ def modelprep(stockname,labels,startdate,enddate,trainratio,signalname="Sell"):
 
 def modeleval(model,stockname,x_test,y_test,threshold=0.5):
 
+    """ This function cevaluates the performance of the model.
+    
+    Parameters
+    ----------
+    stockname : string
+        name of stock
+    labels : pandas.Series with float values
+        buy and sell labels provided for the stock
+    startdate : datetime format
+        starting date of stock data
+    enddate : datetime format
+        finaldate of stock data
+    trainration : float
+        ratio of train-test split    
+    signalname : string
+        buy or sell  
+    
+    Returns
+    -------
+    pandas dataframe
+        final input features for the model
+        
+    """
     # Transform Predicted signals to dataframe------------------------------------------------------------------------
     predictions = model.predict(x_test)
     
